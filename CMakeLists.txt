@@ -10,6 +10,7 @@ set(CMAKE_BUILD_TYPE debug)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_executable(ParserSales
+    src/TelegramSender.cpp
     src/main.cpp
 )
 

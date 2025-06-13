@@ -1,3 +1,5 @@
+#include "TelegramSender.h"
+
 #include <iostream>
 
 int main(void)
