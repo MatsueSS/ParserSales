@@ -111,7 +111,7 @@ bool PostgresDB::execute(Type&& query, Container&& container) const
 template<typename Container, typename Type>
 std::vector<std::vector<std::string>> PostgresDB::fetch(Type&& query, Container&& container) const
 {
-    std::vector<const char*> n_params = params_transfrom(std::forward<Container>(container));
+    std::vector<const char*> n_params = params_transform(std::forward<Container>(container));
 
     PGresultPTR result(
         PQexecParams(conn.get(), query.c_str(), n_params.size(),
