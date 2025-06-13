@@ -1,0 +1,2 @@
+Test a this module i try be control check_msg-function.
+This function work so good without errors
