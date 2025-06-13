@@ -1,0 +1,3 @@
+Result is_connect with connect: 1
+Result is_connect without connect: 0
+Make a execute: 1

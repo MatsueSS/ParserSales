@@ -49,9 +49,9 @@ private:
 };
 
 template<typename Type>
-bool PostgresDB::connect(Type&& conn)
+bool PostgresDB::connect(Type&& data)
 {
-    PGconn* temp_conn = PQconnectdb(conn.c_str());
+    PGconn* temp_conn = PQconnectdb(data.c_str());
 
     if(!temp_conn)
         return 0;
@@ -70,10 +70,10 @@ bool PostgresDB::connect(Type&& conn)
 }
 
 template<typename Type>
-bool PostgresDB::make_db(Type&& conn) const
+bool PostgresDB::make_db(Type&& data) const
 {
     PGresultPTR result (
-        PQexec(conn.get(), ("CREATE DATABASE " + conn).c_str()),
+        PQexec(conn.get(), ("CREATE DATABASE " + data).c_str()),
         [](PGresult* res){ PQclear(res); }
     );
 
@@ -97,7 +97,7 @@ std::vector<const char*> PostgresDB::params_transform(Container&& container) con
 template<typename Container, typename Type>
 bool PostgresDB::execute(Type&& query, Container&& container) const
 {
-    std::vector<const char*> n_params = params_transfrom(std::forward<Container>(container));
+    std::vector<const char*> n_params = params_transform(std::forward<Container>(container));
 
     PGresultPTR result(
         PQexecParams(conn.get(), query.c_str(), n_params.size(), 
