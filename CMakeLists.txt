@@ -12,7 +12,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 add_executable(ParserSales
     src/TelegramSender.cpp
     src/PostgresDB
-    tests/test_PostgresDB.cpp
+    tests/test_TelegramSender.cpp
 )
 
 find_package(Boost REQUIRED)

@@ -1,0 +1,2 @@
+Make a test. Can be read msg with last offset and write message
+all work with good
