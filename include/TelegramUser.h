@@ -29,6 +29,8 @@ public:
     template<typename Type>
     void forecasting(Type&&);
 
+    const std::unordered_set<std::string>& get_cards() const;
+
     std::string get_id() const;
 
 private:

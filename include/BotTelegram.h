@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include <fstream>
+#include <atomic>
 
 class BotTelegram{
 public:
@@ -32,9 +33,12 @@ public:
     template<typename Type>
     TelegramUser* find_user(Type&&);
 
+    ~BotTelegram();
+
 private:
     std::string offset;
     std::vector<std::unique_ptr<TelegramUser>> users;
+    std::atomic<bool> stop_flag{false};
 
 };
 

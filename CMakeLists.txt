@@ -14,7 +14,7 @@ add_executable(ParserSales
     src/PostgresDB
     src/JsonReader.cpp
     src/PyLoader.cpp
-    tests/test_BotTelegram.cpp
+    src/main.cpp
     src/TelegramUser.cpp
     src/BotTelegram.cpp
 )

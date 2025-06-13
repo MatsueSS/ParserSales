@@ -22,3 +22,8 @@ TelegramUser& TelegramUser::operator=(TelegramUser&& obj) noexcept
     id = std::move(obj.id);
     return *this;
 }
+
+const std::unordered_set<std::string>& TelegramUser::get_cards() const
+{
+    return lovely_product;
+}
