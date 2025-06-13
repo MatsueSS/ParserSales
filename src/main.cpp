@@ -1,12 +1,11 @@
 #include <iostream>
 
-#include "BotTelegram.h"
+#include "Interface.h"
 
 int main(void)
 {
-    BotTelegram bot("512291455");
-
-    auto user = bot.find_user("828404782");
+    Interface interface("512291456");
+    interface.start();
 
     return 0;
 }

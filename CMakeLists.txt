@@ -17,6 +17,7 @@ add_executable(ParserSales
     src/main.cpp
     src/TelegramUser.cpp
     src/BotTelegram.cpp
+    src/good_function.cpp
 )
 
 find_package(Boost REQUIRED)
