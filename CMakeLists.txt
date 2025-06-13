@@ -13,7 +13,8 @@ add_executable(ParserSales
     src/TelegramSender.cpp
     src/PostgresDB
     src/JsonReader.cpp
-    tests/test_JsonReader.cpp
+    src/PyLoader.cpp
+    tests/test_PyLoader.cpp
 )
 
 find_package(Boost REQUIRED)
