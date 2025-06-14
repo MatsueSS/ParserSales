@@ -6,7 +6,7 @@
 class Forecast{
 public:
     template<typename Container>
-    static double make_forecast(Container&&);
+    double make_forecast(Container&&) const;
 
 private:
     template<typename Container>
@@ -60,7 +60,7 @@ double Forecast::probability_poisson(Mean&& mean, N&& n) const
 }
 
 template<typename Container>
-double Forecast::make_forecast(Container&& sample)
+double Forecast::make_forecast(Container&& sample) const
 {
     return probability_geometric(get_mean(std::forward<Container>(sample)));
 }

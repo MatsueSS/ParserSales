@@ -81,12 +81,14 @@ void TelegramUser::notify(Type&& sale)
             auto ptr = TelegramSender::get_instance();
             if(lovely_product.find(sale) != lovely_product.end())
                 ptr->call(std::string(id), type_msg::send, std::string(sale));
+            break;
         }
         case 4:
         {
             double probability = forecasting(sale);
             auto ptr = TelegramSender::get_instance();
             ptr->call(std::string(id), type_msg::send, std::string("Вероятность того, что скидка будет на следующей неделе равна " + std::to_string(probability)));
+            break;
         }
     }
 }
@@ -102,15 +104,16 @@ double TelegramUser::forecasting(Type&& str)
 
     std::vector<std::chrono::year_month_day> dates;
     for(int i = 0; i < res.size(); i++){
-        dates[i] = to_date(res[i]);
+        dates[i] = to_date(res[i][0]);
     }
 
     std::vector<int> sample;
     for(int i = 1; i < res.size(); i++){
         sample.push_back(count_week(dates[i], dates[i-1]));
     }
-
-    return Forecast::make_forecast(std::move(sample));
+    
+    Forecast f;
+    return f.make_forecast(sample);
 }
 
 #endif //_TELEGRAM_USER_H_
