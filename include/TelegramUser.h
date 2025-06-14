@@ -4,6 +4,8 @@
 #include "json.hpp"
 #include "TelegramSender.h"
 #include "Forecast.hpp"
+#include "PostgresDB.h"
+#include "good_function.hpp"
 
 #include <unordered_set>
 #include <string>
@@ -28,7 +30,7 @@ public:
     void del_product(Type&&);
 
     template<typename Type>
-    void forecasting(Type&&);
+    double forecasting(Type&&);
 
     const std::unordered_set<std::string>& get_cards() const;
 
@@ -82,15 +84,33 @@ void TelegramUser::notify(Type&& sale)
         }
         case 4:
         {
-            forecasting(sale);
+            double probability = forecasting(sale);
+            auto ptr = TelegramSender::get_instance();
+            ptr->call(std::string(id), type_msg::send, std::string("Вероятность того, что скидка будет на следующей неделе равна " + std::to_string(probability)));
         }
     }
 }
 
 template<typename Type>
-void TelegramUser::forecasting(Type&& str)
+double TelegramUser::forecasting(Type&& str)
 {
+    PostgresDB db;
+    std::string conn = get_conn();
+    db.connect(conn);
 
+    auto res = db.fetch(std::string("SELECT date FROM cards WHERE name = $1 ORDER BY date ASC;"), std::vector<std::string>{std::forward<Type>(str)});
+
+    std::vector<std::chrono::year_month_day> dates;
+    for(int i = 0; i < res.size(); i++){
+        dates[i] = to_date(res[i]);
+    }
+
+    std::vector<int> sample;
+    for(int i = 1; i < res.size(); i++){
+        sample.push_back(count_week(dates[i], dates[i-1]));
+    }
+
+    return Forecast::make_forecast(std::move(sample));
 }
 
 #endif //_TELEGRAM_USER_H_

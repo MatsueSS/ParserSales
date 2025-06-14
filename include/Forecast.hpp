@@ -62,7 +62,7 @@ double Forecast::probability_poisson(Mean&& mean, N&& n) const
 template<typename Container>
 double Forecast::make_forecast(Container&& sample)
 {
-    return probability_geometric(get_mean(std::forward<Container>(sample)))
+    return probability_geometric(get_mean(std::forward<Container>(sample)));
 }
 
 #endif //_FORECAST_HPP_
