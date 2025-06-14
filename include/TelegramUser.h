@@ -3,6 +3,7 @@
 
 #include "json.hpp"
 #include "TelegramSender.h"
+#include "Forecast.hpp"
 
 #include <unordered_set>
 #include <string>
