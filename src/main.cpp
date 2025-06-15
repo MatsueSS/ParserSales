@@ -1,20 +1,16 @@
 #include <iostream>
+#include <thread>
 
-#include "BotTelegram.h"
-#include "json.hpp"
+#include "Interface.h"
 
 int main(void)
 {
-    BotTelegram bot("512291456");
-    
-    std::ifstream file("../res/cards.json");
-    nlohmann::json json = nlohmann::json::parse(file);
-    for(const auto& obj : json["cards"]){
-        std::string name = obj["name"];
-        bot.notify_all("3. "+name);
-    }
+    Interface interface("512291459");
 
-    while(true){}
+    while(true){
+        std::cout << interface.start() << '\n';
+        std::this_thread::sleep_for(std::chrono::seconds(1000));
+    }
 
     return 0;
 }

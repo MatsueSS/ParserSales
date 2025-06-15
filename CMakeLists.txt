@@ -17,6 +17,7 @@ add_executable(ParserSales
     src/main.cpp
     src/TelegramUser.cpp
     src/BotTelegram.cpp
+    src/Interface.cpp
     src/good_function.cpp
 )
 
