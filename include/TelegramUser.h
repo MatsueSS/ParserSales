@@ -9,6 +9,7 @@
 
 #include <unordered_set>
 #include <string>
+#include <iostream>
 
 class TelegramUser{
 public:
@@ -79,8 +80,9 @@ void TelegramUser::notify(Type&& sale)
         case 3:
         {
             auto ptr = TelegramSender::get_instance();
-            if(lovely_product.find(sale) != lovely_product.end())
+            if(lovely_product.find(sale) != lovely_product.end()){
                 ptr->call(std::string(id), type_msg::send, std::string(sale));
+            }
             break;
         }
         case 4:

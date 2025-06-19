@@ -8,6 +8,7 @@
 #include <memory>
 #include <fstream>
 #include <atomic>
+#include <iostream>
 
 class BotTelegram{
 public:
