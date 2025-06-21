@@ -26,10 +26,8 @@ std::chrono::year_month_day to_date(std::string str)
     unsigned int month_int, day_int;
     char sep1, sep2;
     iss >> year_int >> sep1 >> month_int >> sep2 >> day_int;
-    return std::chrono::year_month_day{
-        std::chrono::year{year_int}, 
-        std::chrono::month{month_int},
-        std::chrono::day{day_int}};
+    auto ymd = std::chrono::year{(int)year_int}/std::chrono::month{month_int}/std::chrono::day{day_int};
+    return ymd;
 }
 
 int count_week(std::chrono::year_month_day obj1, std::chrono::year_month_day obj2)
@@ -37,6 +35,6 @@ int count_week(std::chrono::year_month_day obj1, std::chrono::year_month_day obj
     std::chrono::sys_days sd1 = std::chrono::sys_days{obj1};
     std::chrono::sys_days sd2 = std::chrono::sys_days{obj2};
 
-    auto diff_days = (sd2 - sd1).count();
+    auto diff_days = (sd1 - sd2).count();
     return diff_days / 7;
 }

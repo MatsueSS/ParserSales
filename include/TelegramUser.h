@@ -9,7 +9,6 @@
 
 #include <unordered_set>
 #include <string>
-#include <iostream>
 
 class TelegramUser{
 public:
@@ -106,7 +105,7 @@ double TelegramUser::forecasting(Type&& str)
 
     std::vector<std::chrono::year_month_day> dates;
     for(int i = 0; i < res.size(); i++){
-        dates[i] = to_date(res[i][0]);
+        dates.push_back(to_date(res[i][0]));
     }
 
     std::vector<int> sample;
