@@ -11,7 +11,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_executable(ParserSales
     src/TelegramSender.cpp
-    src/PostgresDB
+    src/PostgresDB.cpp
     src/JsonReader.cpp
     src/PyLoader.cpp
     src/main.cpp

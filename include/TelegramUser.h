@@ -84,11 +84,28 @@ void TelegramUser::notify(Type&& sale)
             }
             break;
         }
-        case 4:
+        case 4: //forecast
         {
             double probability = forecasting(sale);
             auto ptr = TelegramSender::get_instance();
             ptr->call(std::string(id), type_msg::send, std::string("Вероятность того, что скидка будет на следующей неделе равна " + std::to_string(probability)));
+            break;
+        }
+        case 5: //show all cards
+        {
+            auto ptr = TelegramSender::get_instance();
+            std::string str = "Вот ваш список избранных товаров:\n";
+            for(auto iter = lovely_product.begin(); iter != lovely_product.end(); iter++){
+                str += (*iter + '\n');
+            }
+            ptr->call(std::string(id), type_msg::send, std::move(str));
+            break;
+            
+        }
+        default:
+        {
+            auto ptr = TelegramSender::get_instance();
+            ptr->call(std::string(id), type_msg::send, std::string("Ошибка команды"));
             break;
         }
     }
