@@ -9,6 +9,7 @@
 
 #include <unordered_set>
 #include <string>
+#include <iostream>
 
 class TelegramUser{
 public:
@@ -56,58 +57,10 @@ void TelegramUser::del_product(Type&& product)
 template<typename Type>
 void TelegramUser::notify(Type&& sale)
 {
-    int val = sale[0] - '0';
-    sale = sale.substr(3);
-    switch(val)
-    {
-        case 1: //add_card
-            lovely_product.emplace(std::forward<Type>(sale));
-            break;
-        case 2: //get_sales
-        {
-            std::ifstream file("../res/cards.json");
-            nlohmann::json json = nlohmann::json::parse(file);
-            auto ptr = TelegramSender::get_instance();
-            for(const auto& obj : json["cards"]){
-                std::string name = obj["name"];
-                if(lovely_product.find(name) != lovely_product.end()){
-                    ptr->call(std::string(id), type_msg::send, std::string(name));
-                }
-            }
-            break;
-        }
-        case 3:
-        {
-            auto ptr = TelegramSender::get_instance();
-            if(lovely_product.find(sale) != lovely_product.end()){
-                ptr->call(std::string(id), type_msg::send, std::string(sale));
-            }
-            break;
-        }
-        case 4: //forecast
-        {
-            double probability = forecasting(sale);
-            auto ptr = TelegramSender::get_instance();
-            ptr->call(std::string(id), type_msg::send, std::string("Вероятность того, что скидка будет на следующей неделе равна " + std::to_string(probability)));
-            break;
-        }
-        case 5: //show all cards
-        {
-            auto ptr = TelegramSender::get_instance();
-            std::string str = "Вот ваш список избранных товаров:\n";
-            for(auto iter = lovely_product.begin(); iter != lovely_product.end(); iter++){
-                str += (*iter + '\n');
-            }
-            ptr->call(std::string(id), type_msg::send, std::move(str));
-            break;
-            
-        }
-        default:
-        {
-            auto ptr = TelegramSender::get_instance();
-            ptr->call(std::string(id), type_msg::send, std::string("Ошибка команды"));
-            break;
-        }
+    if(lovely_product.count(sale)){
+        auto ptr = TelegramSender::get_instance();
+        std::cout << sale << '\n';
+        ptr->call(std::string(id), type_msg::send, std::string(sale));
     }
 }
 

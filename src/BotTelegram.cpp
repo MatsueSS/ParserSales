@@ -4,6 +4,9 @@
 #include "PostgresDB.h"
 
 #include "good_function.hpp"
+#include "JsonReader.h"
+#include "json.hpp"
+#include "TelegramSender.h"
 
 #include <thread>
 #include <iostream>
@@ -37,31 +40,56 @@ void BotTelegram::check_msg()
 {
     std::string id, data;
     while(!stop_flag.load()){
-        std::this_thread::sleep_for(std::chrono::seconds(10));
-        auto ptr = TelegramSender::get_instance();
-        ptr->call(std::string(""), type_msg::read, std::string(offset));
+        //auto ptr = TelegramSender::get_instance();
+        //ptr->call(std::string(""), type_msg::read, std::string(offset));
         auto v = JsonReader::read("jq -r '.result[] | select(.message.text != null) | {text: .message.text, id: .message.from.id}' ../res/result_"+ offset +".json", type_json::message);
         if(!v.empty())
         {
             id = v[2];
             data = v[1];
 
-            if(data == "start"){
+            std::cout << data << '\n';
+
+            if(data == "/start"){
                 users.emplace_back(std::make_unique<TelegramUser>(id));
             }
-            else{
-                for(const auto& user : users){
-                    if(user->get_id() == id){
-                        user->notify(data);
-                        break;
-                    }
+            else if(data == "/status"){
+                auto user = find_user(std::move(id));
+                std::ifstream file("../res/cards.json");
+                nlohmann::json j = nlohmann::json::parse(file);
+
+                std::string date = j["date"];
+
+                for(const auto& card : j["cards"]){
+                    std::string str_name = card["name"];
+                    user->notify(str_name);
                 }
+            }
+            else if(data == "/forecast"){
+                auto user = find_user(id);
+                double probability = user->forecasting(data);
+
+            }
+            else if(data == "/add_card"){
+
+            }
+            else if(data == "/my_cards"){
+                auto ptr = TelegramSender::get_instance();
+            }
+            else if(data == "/del_cards"){
+
+            }
+            else{
+                auto user = find_user(id);
+                auto ptr = TelegramSender::get_instance();
+                ptr->call(std::string(id), type_msg::send, std::string("Неправильная команда"));
             }
 
             long long oset = std::stoll(offset);
             oset++;
             offset = std::to_string(oset);
         }
+        std::this_thread::sleep_for(std::chrono::seconds(10));
     }
 }
 
