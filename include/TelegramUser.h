@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <string>
 #include <iostream>
+#include <cmath>
 
 class TelegramUser{
 public:
@@ -84,7 +85,9 @@ double TelegramUser::forecasting(Type&& str)
     }
     
     Forecast f;
-    return f.make_forecast(sample);
+    double probability = f.make_forecast(sample);
+    int n = count_week(get_date_now(), dates.back());
+    return pow((1.0-probability), n)*probability;
 }
 
 #endif //_TELEGRAM_USER_H_

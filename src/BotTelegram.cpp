@@ -68,7 +68,7 @@ void BotTelegram::check_msg()
             else if(data == "/forecast"){
                 auto user = find_user(id);
                 double probability = user->forecasting(data);
-
+                
             }
             else if(data == "/add_card"){
 
