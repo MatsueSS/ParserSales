@@ -76,46 +76,46 @@ bool Interface::start()
                 if(c != 34)
                     name.push_back(c);
             }
-            bot->notify_all("3. " + name);
+            bot->notify_all(name);
 
             db.execute(std::string("INSERT INTO cards (name, price, discount, date) VALUES($1, $2, $3, $4);"), std::vector<std::string>{name, price, sale, date});
         }
         db.close();
     } else {
-        // std::ifstream file("../res/cards.json");
-        // nlohmann::json json = nlohmann::json::parse(file);
-        // std::string date = json["date"];
+        std::ifstream file("../res/cards.json");
+        nlohmann::json json = nlohmann::json::parse(file);
+        std::string date = json["date"];
 
-        // PostgresDB db;
-        // std::string conn = get_conn();
-        // db.connect(conn);
+        PostgresDB db;
+        std::string conn = get_conn();
+        db.connect(conn);
 
-        // for(const auto& obj : json["cards"]){
-        //     std::string str_name = obj["name"];
-        //     std::string str_price = obj["price"];
-        //     std::string str_sale = obj["sale"];
+        for(const auto& obj : json["cards"]){
+            std::string str_name = obj["name"];
+            std::string str_price = obj["price"];
+            std::string str_sale = obj["sale"];
 
-        //     std::string name, price, sale;
+            std::string name, price, sale;
 
-        //     for(char c : str_price)
-        //         if(isdigit(c))
-        //             price.push_back(c);
+            for(char c : str_price)
+                if(isdigit(c))
+                    price.push_back(c);
 
-        //     for(char c : str_sale)
-        //         if(isdigit(c))
-        //             sale.push_back(c);
+            for(char c : str_sale)
+                if(isdigit(c))
+                    sale.push_back(c);
 
-        //     for(char c : str_name){
-        //         if(c != 34)
-        //             name.push_back(c);
-        //     }
+            for(char c : str_name){
+                if(c != 34)
+                    name.push_back(c);
+            }
 
-        //     // db.execute(std::string("INSERT INTO cards (name, price, discount, date) VALUES($1, $2, $3, $4);"), std::vector<std::string>{name, price, sale, date});
+            // db.execute(std::string("INSERT INTO cards (name, price, discount, date) VALUES($1, $2, $3, $4);"), std::vector<std::string>{name, price, sale, date});
 
-        //     bot->notify_all("3. " + name);
+            bot->notify_all("3. " + name);
 
-        // }
-        // db.close();
+        }
+        db.close();
     }
     return flag;
 }

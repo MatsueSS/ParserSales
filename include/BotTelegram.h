@@ -4,11 +4,21 @@
 #include "TelegramUser.h"
 
 #include <string>
-#include <vector>
+#include <unordered_set>
 #include <memory>
 #include <fstream>
 #include <atomic>
 #include <iostream>
+
+namespace std{
+    template<>
+    struct hash<TelegramUser>{
+        std::size_t operator()(const TelegramUser& obj) const
+        {
+            return std::hash<std::string>{}(obj.get_id());
+        }
+    };
+}
 
 class BotTelegram{
 public:
@@ -38,7 +48,7 @@ public:
 
 private:
     std::string offset;
-    std::vector<std::unique_ptr<TelegramUser>> users;
+    std::unordered_set<std::unique_ptr<TelegramUser>> users;
     std::atomic<bool> stop_flag{false};
 
 };
@@ -53,7 +63,7 @@ void BotTelegram::notify_all(Type&& sale)
 template<typename Type>
 void BotTelegram::add_user(Type&& user)
 {
-    users.emplace_back(user);
+    users.emplace(user);
 }
 
 template<typename Type>

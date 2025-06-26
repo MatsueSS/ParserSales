@@ -32,13 +32,13 @@ BotTelegram::BotTelegram(std::string offset) : offset(offset)
             user->add_product(match[1]);
             begin = match.suffix().first;
         }
-        users.emplace_back(std::move(user));
+        users.emplace(std::move(user));
     }
 }
 
 void BotTelegram::check_msg()
 {
-    std::string id, data;
+    std::string id, command, data;
     while(!stop_flag.load()){
         //auto ptr = TelegramSender::get_instance();
         //ptr->call(std::string(""), type_msg::read, std::string(offset));
@@ -46,14 +46,19 @@ void BotTelegram::check_msg()
         if(!v.empty())
         {
             id = v[2];
-            data = v[1];
-
-            std::cout << data << '\n';
-
-            if(data == "/start"){
-                users.emplace_back(std::make_unique<TelegramUser>(id));
+            
+            std::size_t spacePos = v[1].find(' ');
+            if(spacePos != std::string::npos){
+                command = v[1].substr(0, spacePos);
+                data = v[1].substr(spacePos+1);
+            } else {
+                command = v[1];
             }
-            else if(data == "/status"){
+
+            if(command == "/start"){
+                users.emplace(std::make_unique<TelegramUser>(id));
+            }
+            else if(command == "/status"){
                 auto user = find_user(std::move(id));
                 std::ifstream file("../res/cards.json");
                 nlohmann::json j = nlohmann::json::parse(file);
@@ -65,19 +70,33 @@ void BotTelegram::check_msg()
                     user->notify(str_name);
                 }
             }
-            else if(data == "/forecast"){
+            else if(command == "/forecast"){
                 auto user = find_user(id);
                 double probability = user->forecasting(data);
-                
+                user->notify(std::string("Вероятность скидки на следующей неделе равна: ") + std::to_string(probability));
             }
-            else if(data == "/add_card"){
-
+            else if(command == "/add_card"){
+                auto user = find_user(id);
+                PostgresDB db;
+                std::string conn = get_conn();
+                db.connect(conn);
+                db.execute(std::string("UPDATE users SET cards = array_append(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                user->add_product(data);
             }
-            else if(data == "/my_cards"){
+            else if(command == "/my_cards"){
                 auto ptr = TelegramSender::get_instance();
+                auto user = find_user(id);
+                auto cards = user->get_cards();
+                for(auto iter = cards.begin(); iter != cards.end(); iter++)
+                    user->notify(*iter);
             }
-            else if(data == "/del_cards"){
-
+            else if(command == "/del_cards"){
+                auto user = find_user(id);
+                PostgresDB db;
+                std::string conn = get_conn();
+                db.connect(conn);
+                db.execute(std::string("UPDATE users SET cards = array_remove(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                user->del_product(data);
             }
             else{
                 auto user = find_user(id);

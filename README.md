@@ -8,18 +8,20 @@ I wanted to implement a convenient application that frees me from the daily rout
 
 I used C++, Python to write the program. I chose the open source library for parsing json-files nlohmann::json and jq.I also analyzed geometric distribution, which requires knowledge of statistics and probability theory.In Python I used libraries such as requests, selenium, sys, json. As a database I chose PosgtresDB
 
------ Selected ideas -----
+----- instructions -----
 
-I recently read Scott Myers' book and learned about universal links and I wanted to spread this idea as my own project. I thought it was a good idea, so I gave a lot of weight to universal links.
+I will describe in full what is needed to launch the application and start using it. First of all, you need to install libpq, libcurl to be able to build the projecе. 
 
-In the TelegramSender, I implemented sending and reading telegram messages as a single function.
+for ubuntu
+sudo apt install libpq-dev libcurl4-openssl-dev
 
-In the TelegramUser, I implemented a sample data type for individual users. They store cards of preferred products. At the beginning of the design, it seemed to me a good idea to use the Observer pattern there, so I stuck to this idea. Perhaps in the future, something will change and this will be used more actively.
 
-In the PyLoader, I realize load py-scripts.
+After that you need to create a database in your psql profile and 2 tables for users and product cards. 
 
-In the PostgresDB, i realize work with postgresdb.
+CREATE TABLE cards (name TEXT, price INT, dicsount INT, date DATE);
 
-In the JsonReader, I realize read json.
+CREATE TABLE users (id TEXT, cards TEXT[]);
 
-In the good_function, the functions used are stored.
+After that, you need to create a telegram bot and get a token, and then configure this bot according to the instructions below
+
+need create 6 commands

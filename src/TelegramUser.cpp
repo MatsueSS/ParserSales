@@ -27,3 +27,8 @@ const std::unordered_set<std::string>& TelegramUser::get_cards() const
 {
     return lovely_product;
 }
+
+bool TelegramUser::operator==(const TelegramUser& obj) const
+{
+    return id == obj.id;
+}

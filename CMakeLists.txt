@@ -15,7 +15,6 @@ add_executable(${PROJECT_NAME}
     src/JsonReader.cpp
     src/PyLoader.cpp
     src/main.cpp
-    tests/test_PostgresDB/test_PostgresDB_2.cpp
     src/TelegramUser.cpp
     src/BotTelegram.cpp
     src/Interface.cpp

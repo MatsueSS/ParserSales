@@ -22,6 +22,8 @@ public:
     TelegramUser(TelegramUser&&) noexcept;
     TelegramUser& operator=(TelegramUser&&) noexcept;
 
+    bool operator==(const TelegramUser&) const;
+
     template<typename Type>
     void notify(Type&&);
 
