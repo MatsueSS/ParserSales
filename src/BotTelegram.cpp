@@ -40,8 +40,8 @@ void BotTelegram::check_msg()
 {
     std::string id, command, data;
     while(!stop_flag.load()){
-        //auto ptr = TelegramSender::get_instance();
-        //ptr->call(std::string(""), type_msg::read, std::string(offset));
+        auto ptr = TelegramSender::get_instance();
+        ptr->call(std::string(""), type_msg::read, std::string(offset));
         auto v = JsonReader::read("jq -r '.result[] | select(.message.text != null) | {text: .message.text, id: .message.from.id}' ../res/result_"+ offset +".json", type_json::message);
         if(!v.empty())
         {
