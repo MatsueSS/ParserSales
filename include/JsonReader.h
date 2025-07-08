@@ -23,7 +23,7 @@ private:
 template<typename Type>
 std::vector<std::string> JsonReader::read(Type&& query, type_json type)
 {
-    std::array<char, 128> buffer;   
+    std::array<char, 1024> buffer;   
     std::string str;
 
     std::vector<std::string> result;

@@ -5,7 +5,8 @@
 
 int main(void)
 {
-    Interface interface("512291515");
+    std::string offset = read_offset();
+    Interface interface(offset);
 
     while(true){
         interface.start();

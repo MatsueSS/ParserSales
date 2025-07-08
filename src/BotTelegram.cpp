@@ -40,9 +40,9 @@ void BotTelegram::check_msg()
 {
     std::string id, command, data;
     while(!stop_flag.load()){
-        auto ptr = TelegramSender::get_instance();
-        ptr->call(std::string(""), type_msg::read, std::string(offset));
-        auto v = JsonReader::read("jq -r '.result[] | select(.message.text != null) | {text: .message.text, id: .message.from.id}' ../res/result_"+ offset +".json", type_json::message);
+        //auto ptr = TelegramSender::get_instance();
+        //ptr->call(std::string(""), type_msg::read, std::string(offset));
+        auto v = JsonReader::read("jq -r '.result[] | {text: .message.text, id: .message.from.id}' ../res/result_"+ offset +".json", type_json::message);
         if(!v.empty())
         {
             id = v[2];
@@ -67,7 +67,8 @@ void BotTelegram::check_msg()
 
                 for(const auto& card : j["cards"]){
                     std::string str_name = card["name"];
-                    user->notify(str_name);
+                    if(user->is_has(str_name))
+                        user->notify(str_name);
                 }
             }
             else if(command == "/forecast"){
@@ -107,8 +108,9 @@ void BotTelegram::check_msg()
             long long oset = std::stoll(offset);
             oset++;
             offset = std::to_string(oset);
+            offset_reload(offset);
         }
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     }
 }
 

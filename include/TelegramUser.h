@@ -36,7 +36,12 @@ public:
     template<typename Type>
     double forecasting(Type&&);
 
+    template<typename Type>
+    bool is_has(Type&&) const;
+
     const std::unordered_set<std::string>& get_cards() const;
+
+    int count_cards() const;
 
     std::string get_id() const;
 
@@ -60,11 +65,8 @@ void TelegramUser::del_product(Type&& product)
 template<typename Type>
 void TelegramUser::notify(Type&& sale)
 {
-    if(lovely_product.count(sale)){
-        auto ptr = TelegramSender::get_instance();
-        std::cout << sale << '\n';
-        ptr->call(std::string(id), type_msg::send, std::string(sale));
-    }
+    auto ptr = TelegramSender::get_instance();
+    ptr->call(std::string(id), type_msg::send, std::string(sale));
 }
 
 template<typename Type>
@@ -93,6 +95,12 @@ double TelegramUser::forecasting(Type&& str)
     double probability = f.make_forecast(sample);
     int n = count_week(get_date_now(), dates.back());
     return pow((1.0-probability), n)*probability;
+}
+
+template<typename Type>
+bool TelegramUser::is_has(Type&& str) const
+{
+    return lovely_product.count(str);
 }
 
 #endif //_TELEGRAM_USER_H_

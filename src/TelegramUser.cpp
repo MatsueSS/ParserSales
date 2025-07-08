@@ -32,3 +32,8 @@ bool TelegramUser::operator==(const TelegramUser& obj) const
 {
     return id == obj.id;
 }
+
+int TelegramUser::count_cards() const
+{
+    return lovely_product.size();
+}

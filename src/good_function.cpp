@@ -1,6 +1,5 @@
 #include "good_function.hpp"
 
-#include <fstream>
 #include <sstream>
 
 std::string get_conn(){
@@ -37,4 +36,16 @@ int count_week(std::chrono::year_month_day obj1, std::chrono::year_month_day obj
 
     auto diff_days = (sd1 - sd2).count();
     return diff_days / 7;
+}
+
+std::string read_offset()
+{
+    std::string str;
+    std::ifstream file("../.env");
+    std::getline(file, str);
+    std::getline(file, str);
+    std::getline(file, str);
+    std::getline(file, str);
+    std::getline(file, str);
+    return str;
 }
