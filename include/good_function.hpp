@@ -1,10 +1,13 @@
 #ifndef _GOOD_FUNCTION_HPP_
 #define _GOOD_FUNCTION_HPP_
 
+#include "PostgresDB.h"
+
 #include <chrono>
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 std::string get_conn();
 
@@ -34,6 +37,21 @@ void offset_reload(Type&& str)
     new_file << str << '\n';
 
     new_file.close();
+}
+
+template<typename Func>
+void retry_db_operation(PostgresDB& db, const std::string& conn, Func op)
+{
+    try{
+        db.connect(conn);
+        op();
+    } catch(BadConnectionDBexception& e) {
+        db.connect(conn);
+        op();
+    } catch(ErrorQueryResultDBexception& e) {
+        std::cout << e.what() << '\n';
+        op();
+    }
 }
 
 #endif //_GOOD_FUNCTION_HPP

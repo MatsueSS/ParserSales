@@ -16,8 +16,17 @@ BotTelegram::BotTelegram(std::string offset) : offset(offset)
 
     std::string conn = get_conn();
     PostgresDB db;
-    db.connect(conn);
-    auto res = db.fetch(std::string("SELECT id, cards FROM users;"), std::vector<std::string>{});
+    std::vector<std::vector<std::string>> res;
+    try{
+        db.connect(conn);
+        res = db.fetch(std::string("SELECT id, cards FROM users;"), std::vector<std::string>{});
+    } catch(BadConnectionDBexception& e){
+        db.connect(conn);
+        res = db.fetch(std::string("SELECT id, cards FROM users;"), std::vector<std::string>{});
+    } catch(ErrorQueryResultDBexception& e){
+        std::cout << e.what() << '\n';
+        res = db.fetch(std::string("SELECT id, cards FROM users;"), std::vector<std::string>{});
+    }
     for(const auto& row : res){
         std::string link = row[1], id = row[0];
         std::unique_ptr<TelegramUser> user = std::make_unique<TelegramUser>(id);
@@ -77,8 +86,17 @@ void BotTelegram::check_msg()
                 auto user = find_user(id);
                 PostgresDB db;
                 std::string conn = get_conn();
-                db.connect(conn);
-                db.execute(std::string("UPDATE users SET cards = array_append(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                // try{
+                //     db.connect(conn);
+                //     db.execute(std::string("UPDATE users SET cards = array_append(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                // } catch(BadConnectionDBexception& e) {
+                //     db.connect(conn);
+                //     db.execute(std::string("UPDATE users SET cards = array_append(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                // } catch(ErrorQueryResultDBexception& e) {
+                //     std::cout << e.what() << '\n';
+                //     db.execute(std::string("UPDATE users SET cards = array_append(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                // }
+                retry_db_operation(db, conn, [&](){db.execute(std::string("UPDATE users SET cards = array_append(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});});
                 user->add_product(data);
             }
             else if(command == "/my_cards"){
@@ -91,8 +109,17 @@ void BotTelegram::check_msg()
                 auto user = find_user(id);
                 PostgresDB db;
                 std::string conn = get_conn();
-                db.connect(conn);
-                db.execute(std::string("UPDATE users SET cards = array_remove(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                // try{
+                //     db.connect(conn);
+                //     db.execute(std::string("UPDATE users SET cards = array_remove(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                // } catch(BadConnectionDBexception& e) {
+                //     db.connect(conn);
+                //     db.execute(std::string("UPDATE users SET cards = array_remove(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                // } catch(ErrorQueryResultDBexception& e) {
+                //     std::cout << e.what() << '\n';
+                //     db.execute(std::string("UPDATE users SET cards = array_remove(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});
+                // }
+                retry_db_operation(db, conn, [&](){db.execute(std::string("UPDATE users SET cards = array_remove(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});});
                 user->del_product(data);
             }
             else{
@@ -131,9 +158,22 @@ BotTelegram::~BotTelegram()
     stop_flag = true;
     std::string conn = get_conn();
     PostgresDB db;
-    db.connect(conn);
+    try{
+        db.connect(conn);
+    } catch(BadConnectionDBexception& e) {
+        db.connect(conn);
+    }
     for(auto user = users.begin(); user != users.end(); user++){
-        auto res = db.fetch(std::string("SELECT 1 FROM users WHERE id = $1 LIMIT 1"), std::vector<std::string>{user->second->get_id()});
+        std::vector<std::vector<std::string>> res;
+        try{
+            res = db.fetch(std::string("SELECT 1 FROM users WHERE id = $1 LIMIT 1"), std::vector<std::string>{user->second->get_id()});
+        } catch(BadConnectionDBexception& e){
+            db.connect(conn);
+            res = db.fetch(std::string("SELECT 1 FROM users WHERE id = $1 LIMIT 1"), std::vector<std::string>{user->second->get_id()});
+        } catch(ErrorQueryResultDBexception& e){
+            std::cout << e.what() << '\n';
+            res = db.fetch(std::string("SELECT 1 FROM users WHERE id = $1 LIMIT 1"), std::vector<std::string>{user->second->get_id()});
+        }
         if(res.empty()){
             auto cards = user->second->get_cards();
             std::string card = "{";
@@ -141,7 +181,16 @@ BotTelegram::~BotTelegram()
                 card = card + *iter + ',';
             }
             card.back() = '}';
-            db.execute(std::string("INSERT INTO users (id, cards) VALUES ($1, $2)"), std::vector<std::string>{user->second->get_id(), card});
+            // try{
+            //     db.execute(std::string("INSERT INTO users (id, cards) VALUES ($1, $2)"), std::vector<std::string>{user->second->get_id(), card});
+            // } catch(BadConnectionDBexception& e) {
+            //     db.connect(conn);
+            //     db.execute(std::string("INSERT INTO users (id, cards) VALUES ($1, $2)"), std::vector<std::string>{user->second->get_id(), card});
+            // } catch(ErrorQueryResultDBexception& e){
+            //     std::cout << e.what() << '\n';
+            //     db.execute(std::string("INSERT INTO users (id, cards) VALUES ($1, $2)"), std::vector<std::string>{user->second->get_id(), card});
+            // }
+            retry_db_operation(db, conn, [&](){db.execute(std::string("INSERT INTO users (id, cards) VALUES ($1, $2)"), std::vector<std::string>{user->second->get_id(), card});});
         }
     }
 }
