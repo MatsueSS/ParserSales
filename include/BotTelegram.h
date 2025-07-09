@@ -4,21 +4,11 @@
 #include "TelegramUser.h"
 
 #include <string>
-#include <unordered_set>
+#include <unordered_map>
 #include <memory>
 #include <fstream>
 #include <atomic>
 #include <iostream>
-
-namespace std{
-    template<>
-    struct hash<TelegramUser>{
-        std::size_t operator()(const TelegramUser& obj) const
-        {
-            return std::hash<std::string>{}(obj.get_id());
-        }
-    };
-}
 
 class BotTelegram{
 public:
@@ -36,9 +26,8 @@ public:
     //in parall_thread for check message in telegram
     void check_msg();
 
-    //only telegtam_user
-    template<typename Type>
-    void add_user(Type&&);
+    //only telegram_user
+    void add_user(std::unique_ptr<TelegramUser>&&);
 
     //polynomial_search
     template<typename Type>
@@ -48,7 +37,7 @@ public:
 
 private:
     std::string offset;
-    std::unordered_set<std::unique_ptr<TelegramUser>> users;
+    std::unordered_map<std::string, std::unique_ptr<TelegramUser>> users;
     std::atomic<bool> stop_flag{false};
 
 };
@@ -56,21 +45,14 @@ private:
 template<typename Type>
 void BotTelegram::notify_all(Type&& sale)
 {
-    for(const auto& user : users)
-        user->notify(std::forward<Type>(sale));
-}
-
-template<typename Type>
-void BotTelegram::add_user(Type&& user)
-{
-    users.emplace(user);
+    for(auto user = users.begin(); user != users.end(); user++)
+        user->second->notify(std::forward<Type>(sale));
 }
 
 template<typename Type>
 TelegramUser* BotTelegram::find_user(Type&& id)
 {
-    auto it = std::find_if(users.begin(), users.end(), [&](const std::unique_ptr<TelegramUser>& obj){return obj->get_id() == id;});
-    return it->get();
+    return users.find(id) != users.end() ? users.find(id)->second.get() : nullptr;
 }
 
 #endif //_BOT_TELEGRAM_H_

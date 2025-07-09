@@ -4,7 +4,6 @@
 #include "PostgresDB.h"
 
 #include "good_function.hpp"
-#include "JsonReader.h"
 #include "json.hpp"
 #include "TelegramSender.h"
 
@@ -32,16 +31,16 @@ BotTelegram::BotTelegram(std::string offset) : offset(offset)
             user->add_product(match[1]);
             begin = match.suffix().first;
         }
-        users.emplace(std::move(user));
+        add_user(std::move(user));
     }
 }
 
 void BotTelegram::check_msg()
 {
-    std::string id, command, data;
+    std::string id, command, data;       
     while(!stop_flag.load()){
-        //auto ptr = TelegramSender::get_instance();
-        //ptr->call(std::string(""), type_msg::read, std::string(offset));
+        auto ptr = TelegramSender::get_instance();
+        ptr->call(std::string(""), type_msg::read, std::string(offset));
         auto v = JsonReader::read("jq -r '.result[] | {text: .message.text, id: .message.from.id}' ../res/result_"+ offset +".json", type_json::message);
         if(!v.empty())
         {
@@ -56,10 +55,10 @@ void BotTelegram::check_msg()
             }
 
             if(command == "/start"){
-                users.emplace(std::make_unique<TelegramUser>(id));
+                users.emplace(id, std::make_unique<TelegramUser>(id));
             }
             else if(command == "/status"){
-                auto user = find_user(std::move(id));
+                auto user = find_user(id);
                 std::ifstream file("../res/cards.json");
                 nlohmann::json j = nlohmann::json::parse(file);
 
@@ -85,7 +84,6 @@ void BotTelegram::check_msg()
                 user->add_product(data);
             }
             else if(command == "/my_cards"){
-                auto ptr = TelegramSender::get_instance();
                 auto user = find_user(id);
                 auto cards = user->get_cards();
                 for(auto iter = cards.begin(); iter != cards.end(); iter++)
@@ -136,16 +134,21 @@ BotTelegram::~BotTelegram()
     std::string conn = get_conn();
     PostgresDB db;
     db.connect(conn);
-    for(const auto& user : users){
-        auto res = db.fetch(std::string("SELECT 1 FROM users WHERE id = $1 LIMIT 1"), std::vector<std::string>{user->get_id()});
+    for(auto user = users.begin(); user != users.end(); user++){
+        auto res = db.fetch(std::string("SELECT 1 FROM users WHERE id = $1 LIMIT 1"), std::vector<std::string>{user->second->get_id()});
         if(res.empty()){
-            auto cards = user->get_cards();
+            auto cards = user->second->get_cards();
             std::string card = "{";
             for(auto iter = cards.begin(); iter != cards.end(); iter++){
                 card = card + *iter + ',';
             }
             card.back() = '}';
-            db.execute(std::string("INSERT INTO users (id, cards) VALUES ($1, $2)"), std::vector<std::string>{user->get_id(), card});
+            db.execute(std::string("INSERT INTO users (id, cards) VALUES ($1, $2)"), std::vector<std::string>{user->second->get_id(), card});
         }
     }
+}
+
+void BotTelegram::add_user(std::unique_ptr<TelegramUser>&& user)
+{
+    users.emplace(user->get_id(), std::move(user));
 }
