@@ -2,10 +2,8 @@
 #include "JsonReader.h"
 #include "TelegramSender.h"
 #include "PostgresDB.h"
-
 #include "good_function.hpp"
 #include "json.hpp"
-#include "TelegramSender.h"
 
 #include <thread>
 #include <iostream>

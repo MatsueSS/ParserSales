@@ -26,3 +26,16 @@ PostgresDB& PostgresDB::operator=(PostgresDB&& obj) noexcept
     conn = std::move(obj.conn);
     return *this;
 }
+
+DBexception::DBexception(std::string str) : error(std::move(str)) {}
+
+DBexception::DBexception(const DBexception& obj) : error(obj.error) {}
+
+const char* DBexception::what() const noexcept
+{
+    return error.c_str();
+}
+
+ErrorQueryResultDBexception::ErrorQueryResultDBexception(std::string str) : DBexception(std::move(str)) {}
+
+BadConnectionDBexception::BadConnectionDBexception(std::string str) : DBexception(std::move(str)) {}

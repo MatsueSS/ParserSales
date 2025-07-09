@@ -5,12 +5,37 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include <string>
 
 using PGconnDeleter = std::function<void(PGconn*)>;
 using PGresultClear = std::function<void(PGresult*)>;
 
 using PGresultPTR = std::unique_ptr<PGresult, PGresultClear>;
 using PGconnPTR = std::unique_ptr<PGconn, PGconnDeleter>;
+
+class DBexception : public std::exception{
+protected:
+    std::string error;
+
+public:
+    DBexception(std::string);
+    DBexception(const DBexception&);
+
+    const char* what() const noexcept override;
+
+};
+
+class ErrorQueryResultDBexception : public DBexception{
+public:
+    ErrorQueryResultDBexception(std::string);
+
+};
+
+class BadConnectionDBexception : public DBexception{
+public:
+    BadConnectionDBexception(std::string);
+
+};
 
 class PostgresDB{
 public:
@@ -37,6 +62,9 @@ public:
     template<typename Container, typename Type>
     std::vector<std::vector<std::string>> fetch(Type&& query, Container&& container) const;
 
+    // template<typename Type>
+    // std::vector<std::vector<std::string>> simple_query(Type&& query) const;
+
     void close();
 
     ~PostgresDB();
@@ -53,12 +81,9 @@ bool PostgresDB::connect(Type&& data)
 {
     PGconn* temp_conn = PQconnectdb(data.c_str());
 
-    if(!temp_conn)
-        return 0;
-
     if(PQstatus(temp_conn) == CONNECTION_BAD){
         PQfinish(temp_conn);
-        return 0;
+        throw BadConnectionDBexception("Cannot be connect\n");
     }
 
     conn = PGconnPTR(
@@ -72,13 +97,16 @@ bool PostgresDB::connect(Type&& data)
 template<typename Type>
 bool PostgresDB::make_db(Type&& data) const
 {
+    if(!conn)
+        throw BadConnectionDBexception("No connect\n");
+
     PGresultPTR result (
         PQexec(conn.get(), ("CREATE DATABASE " + data).c_str()),
         [](PGresult* res){ PQclear(res); }
     );
 
     if(PQresultStatus(result.get()) != PGRES_COMMAND_OK){
-        return 0;
+        throw ErrorQueryResultDBexception("Cannot be create db\n");
     }
 
     return 1;
@@ -97,6 +125,9 @@ std::vector<const char*> PostgresDB::params_transform(Container&& container) con
 template<typename Container, typename Type>
 bool PostgresDB::execute(Type&& query, Container&& container) const
 {
+    if(!conn)
+        throw BadConnectionDBexception("No connect\n");
+
     std::vector<const char*> n_params = params_transform(std::forward<Container>(container));
 
     PGresultPTR result(
@@ -104,6 +135,9 @@ bool PostgresDB::execute(Type&& query, Container&& container) const
         nullptr, n_params.data(), nullptr, nullptr, 0), 
         [](PGresult* res){ PQclear(res); }
     );
+
+    if(!result || PQresultStatus(result.get()) != PGRES_COMMAND_OK)
+        throw ErrorQueryResultDBexception("Error query complete\n");
     
     return PQresultStatus(result.get()) == PGRES_COMMAND_OK;
 }
@@ -111,13 +145,26 @@ bool PostgresDB::execute(Type&& query, Container&& container) const
 template<typename Container, typename Type>
 std::vector<std::vector<std::string>> PostgresDB::fetch(Type&& query, Container&& container) const
 {
+    if(!conn)
+        throw BadConnectionDBexception("No connect\n");
+
     std::vector<const char*> n_params = params_transform(std::forward<Container>(container));
 
-    PGresultPTR result(
-        PQexecParams(conn.get(), query.c_str(), n_params.size(),
-        nullptr, n_params.data(), nullptr, nullptr, 0),
-        [](PGresult* res){ PQclear(res); }
-    );
+    PGresultPTR result;
+    if (n_params.empty()) {
+        result = PGresultPTR(
+            PQexec(conn.get(), query.c_str()),
+            [](PGresult* res){ PQclear(res); }
+        );
+    } else {
+        result = PGresultPTR(
+            PQexecParams(conn.get(), query.c_str(), n_params.size(),
+                        nullptr, n_params.data(), nullptr, nullptr, 0),
+            [](PGresult* res){ PQclear(res); }
+        );
+    }
+    if(!result || PQresultStatus(result.get()) != PGRES_TUPLES_OK)
+        throw ErrorQueryResultDBexception("Error query complete\n");
 
     std::vector<std::vector<std::string>> table;
 
