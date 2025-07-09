@@ -74,10 +74,23 @@ double TelegramUser::forecasting(Type&& str)
 {
     PostgresDB db;
     std::string conn = get_conn();
-    db.connect(conn);
+    try{
+        db.connect(conn);
+    } catch(BadConnectionDBexception& e) {
+        db.connect(conn);
+    }
 
-    auto res = db.fetch(std::string("SELECT date FROM cards WHERE name = $1 ORDER BY date ASC;"), std::vector<std::string>{std::forward<Type>(str)});
-
+    std::vector<std::vector<std::string>> res;
+    try{
+        res = db.fetch(std::string("SELECT date FROM cards WHERE name = $1 ORDER BY date ASC;"), std::vector<std::string>{std::forward<Type>(str)});
+    } catch(BadConnectionDBexception& e) {
+        db.connect(conn);
+        res = db.fetch(std::string("SELECT date FROM cards WHERE name = $1 ORDER BY date ASC;"), std::vector<std::string>{std::forward<Type>(str)});
+    } catch(ErrorQueryResultDBexception& e) {
+        std::cout << e.what() << '\n';
+        res = db.fetch(std::string("SELECT date FROM cards WHERE name = $1 ORDER BY date ASC;"), std::vector<std::string>{std::forward<Type>(str)});
+    }
+    
     std::vector<std::chrono::year_month_day> dates;
     for(int i = 0; i < res.size(); i++){
         dates.push_back(to_date(res[i][0]));
@@ -88,8 +101,8 @@ double TelegramUser::forecasting(Type&& str)
         sample.push_back(count_week(dates[i], dates[i-1]));
     }
 
-    if(sample.size() == 0)
-        return 0;
+    // if(sample.size() == 0)
+    //     return 0;
     
     Forecast f;
     double probability = f.make_forecast(sample);
