@@ -1,31 +1,55 @@
-Result is_connect with connect: 1
-Result is_connect without connect: 0
-Make a execute: 1
-Result of query-'SELECT * FROM data;':
-	2 my_mail 12345 2 
-	4 git 12345 3 
-	5 git 1111 4 
-	6 vk 12345 4 
-	7 git 1111 6 
-	8 vk 1111 7 
-	9 vk 1111 8 
-	10 vk 1111 9 
-	11 test psw 2 
-	12 test psw 2 
-
------ other test -----
-All good with connect
-Result of query - SELECT DISTINCT ON (date) date FROM cards ORDER BY date;:
-	2025-06-09
-	2025-06-16
-	2025-06-23
-
-Result of - SELECT price FROM cards;:
-	109 72 319 239 54 99 39 186 186 149 186 116 124 99 209 44 239 199 149 224 42 279 78 89 42 109 144 69 144 279 479 169 229 219 279 99 224 499 189 369 239 499 139 249 149 123 302 299 223 149 94 189 167 99 299 119 339 649 319 156 100 379 129 229 159 99 37 109 119 69 69 189 69 154 499 37 189 229 201 41 169 69 129 69 109 37 329 84 179 129 114 100 89 139 61 249 69 167 199 44 369 159 129 78 199 167 69 164 69 37 109 119 69 55 79 169 199 84 122 179 389 285 159 106 88 59 122 74 164 173 72 159 169 84 599 89 169 89 109 99 399 129 249 179 184 284 214 48 55 449 164 192 499 469 29 154 92 129 274 109 99 499 239 274 114 89 249 95 229 159 629 169 69 174 59 100 169 109 152 42 159 65 499 229 8 499 59 189 109 313 119 179 629 159 69 179 172 129 151 234 122 104 109 399 229 72 379 199 145 226 129 399 179 199 179 272 109 389 42 629 74 179 42 54 569 219 78 279 429 42 91 69 249 299 149 399 309 54 159 399 35 449 439 269 319 369 499 169 439 499 84 169 246 109 399 399 169 449 299 399 54 759 129 136 249 499 279 229 299 154 899 299 169 499 199 419 229 199 179 299 179 111 229 229 199 89 169 429 199 349 189 229 229 419 229 299 699 159 599 199 149 199 299 699 2499 249 249 123 189 299 379 189 72 189 94 189 199 139 229 27 54 94 99 94 159 57 139 69 196 139 92 64 87 474 229 234 199 199 316 119 214 48 184 284 51 189 129 389 169 164 234 254 189 447 179 145 69 69 167 169 212 239 94 299 119 167 109 239 199 246 69 574 189 189 189 199 79 109 239 219 449 216 109 69 189 209 189 111 99 223 159 209 64 94 139 189 139 68 68 167 269 89 309 69 399 159 68 58 172 129 229 199 69 69 139 89 94 58 216 55 79 159 119 169 109 99 229 152 94 68 159 149 89 64 154 58 159 123 64 87 68 78 249 94 129 94 199 68 68 144 55 69 77 94 87 68 192 94 109 169 274 179 319 167 95 229 95 149 299 274 249 64 68 8 169 449 201 69 78 28 159 129 392 109 129 201 114 189 42 335 299 329 249 68 65 129 159 179 69 77 226 279 156 145 94 129 109 68 68 199 249 100 229 242 449 209 98 249 68 219 91 299 72 403 68 49 344 335 159 279 389 249 89 190 399 279 299 179 179 94 389 389 895 599 289 299 79 87 54 229 99 57 309 159 129 51 79 192 192 144 79 57 117 69 57 39 117 119 33 629 104 99 33 629 51 214 192 359 129 184 219 109 169 309 64 219 167 212 156 189 379 69 69 82 159 94 99 99 66 169 72 74 66 74 229 369 109 94 99 559 109 69 391 135 379 156 109 179 64 109 135 79 64 129 189 499 64 69 135 135 403 64 64 135 164 109 69 109 167 109 57 64 39 176 69 164 176 8 57 79 79 69 76 74 262 199 129 79 57 299 50 64 169 249 169 64 189 59 44 176 27 164 119 109 64 359 249 122 216 89 169 223 64 109 57 599 109 164 69 89 67 135 59 50 84 45 149 79 83 199 71 176 139 92 27 85 99 95 79 77 274 149 59 186 32 109 29 219 33 629 392 313 172 184 64 179 79 32 84 59 65 145 179 216 29 122 179 129 64 99 109 149 242 136 419 41 199 84 33 78 91 100 49 319 344 229 439 39 799 439 569 419 399 119 429 419 384 99 46 46 299 64 192 169 389 389 419 109 
-Result of - SELECT discount FROM cards;:
-	discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount discount 
-Result of - INSERT INTO users (id) VALUES ('123456789');:
-	1
-Result of - DELETE FROM users WHERE id = '123456789';:
-	1
-Good close connect
+----------
+Good query 1 test1_create_table_1
+----------
+----------
+Good query 3 test3_append_data_1
+----------
+----------
+Good query 4 test4_take_data_1
+----------
+----------
+Good query 5 test5_delete_1
+----------
+----------
+exception1 was caught
+Good query 6 test6_no_valid_1
+----------
+----------
+exception2 was caught
+Good query 7 test7_no_valid_2
+----------
+----------
+exception3 was caught
+Good query 8 test8_no_valid_3
+----------
+----------
+exception4 was caught
+Good query 9 test9_no_valid_4
+----------
+----------
+exception5 was caught
+Good  query 10 test10_no_valid_5
+----------
+----------
+exception6 was caught
+Good query 11 test11_lose_connect
+----------
+----------
+exceprion7 was caught
+Good query 12 test12_no_valid_6
+----------
+----------
+exception8 was caught
+Good query 13 test13_no_valid_7
+----------
+----------
+exception9 was caught
+Good query 14 test14_no_valid_8
+----------
+----------
+exception10 was caught
+Good query 15 test15_no_valid_9
+----------
+----------
+Good query 2 test2_drop_table_1
+----------

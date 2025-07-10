@@ -3,7 +3,7 @@
 #include <sstream>
 
 std::string get_conn(){
-    std::ifstream file("../.env");
+    std::ifstream file("/home/michael/practisecpp/projects/ParserSales/.env");
     std::string temp, conn;
     getline(file, temp);
     getline(file, temp);

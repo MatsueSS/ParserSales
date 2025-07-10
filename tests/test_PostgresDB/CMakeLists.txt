@@ -12,7 +12,7 @@ set(SANITIZE_FLAGS "-fsanitize=address,undefined" "-fno-omit-frame-pointer")
 
 add_executable(${PROJECT_NAME}
     ../../src/PostgresDB.cpp
-    test_PostgresDB_2.cpp
+    test_PostgresDB.cpp
     ../../src/good_function.cpp
 )
 

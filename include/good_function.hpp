@@ -9,6 +9,8 @@
 #include <fstream>
 #include <iostream>
 
+const std::string path = "/home/michael/practisecpp/projects/ParserSales/";
+
 std::string get_conn();
 
 std::chrono::year_month_day get_date_now();
@@ -22,7 +24,7 @@ std::string read_offset();
 template<typename Type>
 void offset_reload(Type&& str)
 {
-    std::ifstream old_file("../.env");
+    std::ifstream old_file(path+".env");
     std::string temp;
     std::vector<std::string> arr;
     while(std::getline(old_file, temp))
@@ -30,7 +32,7 @@ void offset_reload(Type&& str)
 
     old_file.close();
 
-    std::ofstream new_file("../.env");
+    std::ofstream new_file(path+".env");
     for(int i = 0; i < arr.size() - 1; i++)
         new_file << arr[i] << '\n';
 
@@ -53,5 +55,7 @@ void retry_db_operation(PostgresDB& db, const std::string& conn, Func op)
         op();
     }
 }
+
+
 
 #endif //_GOOD_FUNCTION_HPP

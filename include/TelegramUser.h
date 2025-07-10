@@ -101,8 +101,8 @@ double TelegramUser::forecasting(Type&& str)
         sample.push_back(count_week(dates[i], dates[i-1]));
     }
 
-    // if(sample.size() == 0)
-    //     return 0;
+    if(sample.size() == 0)
+        return 0;
     
     Forecast f;
     double probability = f.make_forecast(sample);
