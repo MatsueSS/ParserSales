@@ -45,8 +45,11 @@ private:
 template<typename Type>
 void BotTelegram::notify_all(Type&& sale)
 {
-    for(auto user = users.begin(); user != users.end(); user++)
-        user->second->notify(std::forward<Type>(sale));
+    for(auto user = users.begin(); user != users.end(); user++){
+        if(user->second->is_has(sale)){
+            user->second->notify(std::forward<Type>(sale));
+        }
+    }
 }
 
 template<typename Type>

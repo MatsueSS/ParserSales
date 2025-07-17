@@ -71,6 +71,9 @@ void BotTelegram::check_msg()
 
                 std::string date = j["date"];
 
+                auto ptr = TelegramSender::get_instance();
+                ptr->call(std::string(id), type_msg::send, std::string("Текущие скидки:\n"));
+
                 for(const auto& card : j["cards"]){
                     std::string str_name = card["name"];
                     if(user->is_has(str_name))
@@ -98,10 +101,18 @@ void BotTelegram::check_msg()
                 // }
                 retry_db_operation(db, conn, [&](){db.execute(std::string("UPDATE users SET cards = array_append(cards, $1) WHERE id = $2;"), std::vector<std::string>{data, id});});
                 user->add_product(data);
+
+                auto ptr = TelegramSender::get_instance();
+                ptr->call(std::string(id), type_msg::send, std::string("Карточка добавлена\n"));
+
             }
             else if(command == "/my_cards"){
                 auto user = find_user(id);
                 auto cards = user->get_cards();
+
+                auto ptr = TelegramSender::get_instance();
+                ptr->call(std::string(id), type_msg::send, std::string("Ваши карточки\n"));
+
                 for(auto iter = cards.begin(); iter != cards.end(); iter++)
                     user->notify(*iter);
             }
