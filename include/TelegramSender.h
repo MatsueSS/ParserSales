@@ -21,8 +21,8 @@ public:
     TelegramSender& operator=(const TelegramSender&) = delete;
 
     //need id, type_msg, and offset
-    template<typename Data, typename Type>
-    static std::future<void> call(Data&& id, Type&& type, Data&& offset);
+    template<typename Data1, typename Type, typename Data2>
+    static std::future<void> call(Data1&& id, Type&& type, Data2&& offset);
 
 private:
     static TelegramSender* instance;
@@ -35,14 +35,14 @@ private:
 
 size_t writeCallback(void*, size_t, size_t, void*);
 
-template<typename Data, typename Type>
-std::future<void> TelegramSender::call(Data&& id, Type&&type, Data&& offset)
+template<typename Data1, typename Type, typename Data2>
+std::future<void> TelegramSender::call(Data1&& id, Type&&type, Data2&& offset)
 {
     return std::async(std::launch::async, &TelegramSender::query, 
         get_instance(),
-        std::forward<Data>(id),
+        std::forward<Data1>(id),
         std::forward<Type>(type),
-        std::forward<Data>(offset)
+        std::forward<Data2>(offset)
     );
 }
 

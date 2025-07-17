@@ -12,9 +12,26 @@
 #include <iostream>
 #include <cmath>
 
+class TUexception : public std::exception{
+protected:
+    std::string msg;
+
+public:
+    TUexception(std::string);
+    TUexception(const TUexception&);
+
+    const char * what() const noexcept override;
+
+};
+
+class BadTypeValueTUexception : public TUexception{
+public:
+    BadTypeValueTUexception(std::string);
+};
+
 class TelegramUser{
 public:
-    TelegramUser(const std::string& id);
+    TelegramUser(const std::string& id) noexcept;
 
     TelegramUser(const TelegramUser&) = delete;
     TelegramUser& operator=(const TelegramUser&) = delete;
@@ -22,7 +39,7 @@ public:
     TelegramUser(TelegramUser&&) noexcept;
     TelegramUser& operator=(TelegramUser&&) noexcept;
 
-    bool operator==(const TelegramUser&) const;
+    bool operator==(const TelegramUser&) const noexcept;
 
     template<typename Type>
     void notify(Type&&);
@@ -39,11 +56,11 @@ public:
     template<typename Type>
     bool is_has(Type&&) const;
 
-    const std::unordered_set<std::string>& get_cards() const;
+    const std::unordered_set<std::string>& get_cards() const noexcept;
 
-    int count_cards() const;
+    int count_cards() const noexcept;
 
-    std::string get_id() const;
+    std::string get_id() const noexcept;
 
 private:
     std::string id;
@@ -53,25 +70,41 @@ private:
 template<typename Type>
 void TelegramUser::add_product(Type&& product)
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueTUexception("Value must be string\n");
+    }
+
     lovely_product.emplace(std::forward<Type>(product));
 }
 
 template<typename Type>
 void TelegramUser::del_product(Type&& product)
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueTUexception("Value must be string\n");
+    }
+
     lovely_product.erase(std::forward<std::string>(product));
 }
 
 template<typename Type>
 void TelegramUser::notify(Type&& sale)
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueTUexception("Value must be string\n");
+    }
+
     auto ptr = TelegramSender::get_instance();
-    ptr->call(std::string(id), type_msg::send, std::string(sale));
+    ptr->call(id, type_msg::send, std::forward<Type>(sale));
 }
 
 template<typename Type>
 double TelegramUser::forecasting(Type&& str)
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueTUexception("Value must be string\n");
+    }
+
     PostgresDB db;
     std::string conn = get_conn();
     try{
@@ -113,6 +146,10 @@ double TelegramUser::forecasting(Type&& str)
 template<typename Type>
 bool TelegramUser::is_has(Type&& str) const
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueTUexception("Value must be string\n");
+    }
+
     return lovely_product.count(str);
 }
 

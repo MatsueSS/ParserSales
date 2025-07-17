@@ -1,8 +1,8 @@
 #include "TelegramUser.h"
 
-TelegramUser::TelegramUser(const std::string& id) : id(id) {}
+TelegramUser::TelegramUser(const std::string& id) noexcept : id(id) {}
 
-std::string TelegramUser::get_id() const
+std::string TelegramUser::get_id() const noexcept
 {
     return id;
 }
@@ -23,17 +23,28 @@ TelegramUser& TelegramUser::operator=(TelegramUser&& obj) noexcept
     return *this;
 }
 
-const std::unordered_set<std::string>& TelegramUser::get_cards() const
+const std::unordered_set<std::string>& TelegramUser::get_cards() const noexcept
 {
     return lovely_product;
 }
 
-bool TelegramUser::operator==(const TelegramUser& obj) const
+bool TelegramUser::operator==(const TelegramUser& obj) const noexcept
 {
     return id == obj.id;
 }
 
-int TelegramUser::count_cards() const
+int TelegramUser::count_cards() const noexcept
 {
     return lovely_product.size();
+}
+
+TUexception::TUexception(std::string str) : msg(std::move(str)) {}
+
+TUexception::TUexception(const TUexception& obj) : msg(obj.msg) {}
+
+BadTypeValueTUexception::BadTypeValueTUexception(std::string str) : TUexception(std::move(str)) {}
+
+const char * TUexception::what() const noexcept 
+{
+    return msg.c_str();
 }

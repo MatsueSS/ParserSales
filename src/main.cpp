@@ -13,9 +13,5 @@ int main(void)
         std::this_thread::sleep_for(std::chrono::seconds(1000));
     }
 
-    // BotTelegram bot(offset);
-
-    // while(true){}
-
     return 0;
 }

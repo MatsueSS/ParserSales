@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <type_traits>
 
 using PGconnDeleter = std::function<void(PGconn*)>;
 using PGresultClear = std::function<void(PGresult*)>;
@@ -35,6 +36,11 @@ class BadConnectionDBexception : public DBexception{
 public:
     BadConnectionDBexception(std::string);
 
+};
+
+class BadTypeValueDBexception : public DBexception{
+public:
+    BadTypeValueDBexception(std::string);
 };
 
 class PostgresDB{
@@ -79,6 +85,10 @@ private:
 template<typename Type>
 bool PostgresDB::connect(Type&& data)
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueDBexception("Value must be string\n");
+    }
+
     PGconn* temp_conn = PQconnectdb(data.c_str());
 
     if(PQstatus(temp_conn) == CONNECTION_BAD){
@@ -97,6 +107,10 @@ bool PostgresDB::connect(Type&& data)
 template<typename Type>
 bool PostgresDB::make_db(Type&& data) const
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueDBexception("Value must be string\n");
+    }
+
     if(!conn)
         throw BadConnectionDBexception("No connect\n");
 
@@ -125,6 +139,10 @@ std::vector<const char*> PostgresDB::params_transform(Container&& container) con
 template<typename Container, typename Type>
 bool PostgresDB::execute(Type&& query, Container&& container) const
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueDBexception("Value must be string\n");
+    }
+
     if(!conn)
         throw BadConnectionDBexception("No connect\n");
 
@@ -145,6 +163,10 @@ bool PostgresDB::execute(Type&& query, Container&& container) const
 template<typename Container, typename Type>
 std::vector<std::vector<std::string>> PostgresDB::fetch(Type&& query, Container&& container) const
 {
+    if constexpr(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueDBexception("Value must be string\n");
+    }
+
     if(!conn)
         throw BadConnectionDBexception("No connect\n");
 

@@ -45,6 +45,10 @@ private:
 template<typename Type>
 void BotTelegram::notify_all(Type&& sale)
 {
+    if(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadTypeValueTUexception("Value must be string\n");
+    }
+
     for(auto user = users.begin(); user != users.end(); user++){
         if(user->second->is_has(sale)){
             user->second->notify(std::forward<Type>(sale));

@@ -39,3 +39,5 @@ const char* DBexception::what() const noexcept
 ErrorQueryResultDBexception::ErrorQueryResultDBexception(std::string str) : DBexception(std::move(str)) {}
 
 BadConnectionDBexception::BadConnectionDBexception(std::string str) : DBexception(std::move(str)) {}
+
+BadTypeValueDBexception::BadTypeValueDBexception(std::string str) : DBexception(std::move(str)) {}

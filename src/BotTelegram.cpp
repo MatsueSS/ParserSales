@@ -35,7 +35,7 @@ BotTelegram::BotTelegram(std::string offset) : offset(offset)
         auto begin = link.cbegin();
         auto end = link.cend();
         while(std::regex_search(begin, end, match, elementRegex)){
-            user->add_product(match[1]);
+            user->add_product(std::string(match[1]));
             begin = match.suffix().first;
         }
         add_user(std::move(user));
@@ -47,7 +47,7 @@ void BotTelegram::check_msg()
     std::string id, command, data;       
     while(!stop_flag.load()){
         auto ptr = TelegramSender::get_instance();
-        ptr->call(std::string(""), type_msg::read, std::string(offset));
+        ptr->call(std::string(""), type_msg::read, offset);
         auto v = JsonReader::read("jq -r '.result[] | {text: .message.text, id: .message.from.id}' ../res/result_"+ offset +".json", type_json::message);
         if(!v.empty())
         {
@@ -72,7 +72,7 @@ void BotTelegram::check_msg()
                 std::string date = j["date"];
 
                 auto ptr = TelegramSender::get_instance();
-                ptr->call(std::string(id), type_msg::send, std::string("Текущие скидки:\n"));
+                ptr->call(id, type_msg::send, std::string("Текущие скидки:\n"));
 
                 for(const auto& card : j["cards"]){
                     std::string str_name = card["name"];
@@ -103,7 +103,7 @@ void BotTelegram::check_msg()
                 user->add_product(data);
 
                 auto ptr = TelegramSender::get_instance();
-                ptr->call(std::string(id), type_msg::send, std::string("Карточка добавлена\n"));
+                ptr->call(id, type_msg::send, std::string("Карточка добавлена\n"));
 
             }
             else if(command == "/my_cards"){
@@ -111,7 +111,7 @@ void BotTelegram::check_msg()
                 auto cards = user->get_cards();
 
                 auto ptr = TelegramSender::get_instance();
-                ptr->call(std::string(id), type_msg::send, std::string("Ваши карточки\n"));
+                ptr->call(id, type_msg::send, std::string("Ваши карточки\n"));
 
                 for(auto iter = cards.begin(); iter != cards.end(); iter++)
                     user->notify(*iter);
@@ -136,7 +136,7 @@ void BotTelegram::check_msg()
             else{
                 auto user = find_user(id);
                 auto ptr = TelegramSender::get_instance();
-                ptr->call(std::string(id), type_msg::send, std::string("Неправильная команда"));
+                ptr->call(id, type_msg::send, std::string("Неправильная команда"));
             }
 
             long long oset = std::stoll(offset);
