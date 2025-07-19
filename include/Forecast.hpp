@@ -2,6 +2,29 @@
 #define _FORECAST_HPP_
 
 #include <numeric>
+#include <string>
+#include <iostream>
+
+class FCexception : public std::exception{
+protected:
+    std::string msg;
+
+public:
+    FCexception(std::string str) : msg(std::move(str)) {}
+    FCexception(const FCexception& obj) : msg(obj.msg) {}
+
+    const char * what() const noexcept override { return msg.c_str(); };
+};
+
+class BadTypeValueFCexception : public FCexception{
+public:
+    BadTypeValueFCexception(std::string str) : FCexception(std::move(str)) {}
+};
+
+class ZeroDivisionFCexception : public FCexception{
+public:
+    ZeroDivisionFCexception(std::string str) : FCexception(std::move(str)) {}
+};
 
 class Forecast{
 public:
@@ -50,19 +73,37 @@ double Forecast::get_variance(Container&& sample) const
 template<typename Mean>
 double Forecast::probability_geometric(Mean&& mean) const
 {
+    if(mean == 0){
+        throw ZeroDivisionFCexception("Zero Division\n");
+    }
+
     return 1.0 / mean;
 }
 
 template<typename Mean, typename N>
 double Forecast::probability_poisson(Mean&& mean, N&& n) const
 {
+    if(!std::is_same<std::decay_t<N>, int>::value){
+        throw BadTypeValueFCexception("Value must be int\n");
+    }
+
+    if(n == 0){
+        throw ZeroDivisionFCexception("Zero division\n");
+    }
+
     return mean / n;
 }
 
 template<typename Container>
 double Forecast::make_forecast(Container&& sample) const
 {
-    return probability_geometric(get_mean(std::forward<Container>(sample)));
+    double result;
+    try{
+        result = probability_geometric(get_mean(std::forward<Container>(sample)));
+    } catch(ZeroDivisionFCexception& e){
+        throw ZeroDivisionFCexception("Zero Division\n");
+    }
+    return result;
 }
 
 #endif //_FORECAST_HPP_

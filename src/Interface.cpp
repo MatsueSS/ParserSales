@@ -5,10 +5,6 @@
 #include "PostgresDB.h"
 #include "PyLoader.h"
 
-#include <iostream>
-#include <locale>
-#include <codecvt>
-
 Interface::Interface(std::string offset)
 {
     bot = std::make_unique<BotTelegram>(offset);

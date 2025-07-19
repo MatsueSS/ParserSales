@@ -6,6 +6,23 @@
 #include <memory>
 #include <array>
 
+class JSexception : public std::exception{
+protected:
+    std::string msg;
+
+public:
+    JSexception(std::string);
+    JSexception(const JSexception&);
+
+    const char * what() const noexcept override;
+};
+
+class BadValueTypeJSexception : public JSexception{
+public:
+    BadValueTypeJSexception(std::string);
+
+};
+
 enum class type_json{
     products, message
 };
@@ -16,13 +33,17 @@ public:
     static std::vector<std::string> read(Type&&, type_json);
 
 private:
-    static std::string erase_for_products(std::string&&);
-    static std::string erase_for_messages(std::string&&);
+    static std::string erase_for_products(std::string&&) noexcept;
+    static std::string erase_for_messages(std::string&&) noexcept;
 };
 
 template<typename Type>
 std::vector<std::string> JsonReader::read(Type&& query, type_json type)
 {
+    if(!std::is_same<std::decay_t<Type>, std::string>::value){
+        throw BadValueTypeJSexception("Value must be string\n");
+    }
+
     std::array<char, 1024> buffer;   
     std::string str;
 

@@ -1,6 +1,6 @@
 #include "JsonReader.h"
 
-std::string JsonReader::erase_for_products(std::string&& str)
+std::string JsonReader::erase_for_products(std::string&& str) noexcept
 {
     size_t pos = str.find(":");
     if(pos != std::string::npos){
@@ -11,7 +11,7 @@ std::string JsonReader::erase_for_products(std::string&& str)
     return std::move(str);
 }
 
-std::string JsonReader::erase_for_messages(std::string&& str)
+std::string JsonReader::erase_for_messages(std::string&& str) noexcept
 {
     size_t pos = str.find(":");
     if(pos != std::string::npos){
@@ -25,3 +25,14 @@ std::string JsonReader::erase_for_messages(std::string&& str)
 
     return std::move(str);
 }
+
+JSexception::JSexception(std::string str) : msg(std::move(str)) {}
+
+JSexception::JSexception(const JSexception& obj) : msg(obj.msg) {}
+
+const char * JSexception::what() const noexcept
+{
+    return msg.c_str();
+}
+
+BadValueTypeJSexception::BadValueTypeJSexception(std::string str) : JSexception(std::move(str)) {}

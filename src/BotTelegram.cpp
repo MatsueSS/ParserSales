@@ -82,8 +82,12 @@ void BotTelegram::check_msg()
             }
             else if(command == "/forecast"){
                 auto user = find_user(id);
-                double probability = user->forecasting(data);
-                user->notify(std::string("Вероятность скидки на следующей неделе равна: ") + std::to_string(probability));
+                try{
+                    double probability = user->forecasting(data);
+                    user->notify(std::string("Вероятность скидки на следующей неделе равна: ") + std::to_string(probability));
+                } catch(EmptyQueryResultTUexception& e){
+                    user->notify(std::string("Данная карточка не найдена в базе данных"));
+                }
             }
             else if(command == "/add_card"){
                 auto user = find_user(id);

@@ -11,7 +11,7 @@ TelegramSender::TelegramSender()
     file >> token;
 }
 
-TelegramSender* TelegramSender::get_instance()
+TelegramSender* TelegramSender::get_instance() noexcept
 {
     if(instance){
         return instance;
@@ -29,7 +29,7 @@ size_t writeCallback(void* contents, size_t size, size_t nmemb, void* userp)
     return total_size;
 }
 
-void TelegramSender::query(std::string id, type_msg type, std::string offset)
+void TelegramSender::query(std::string id, type_msg type, std::string offset) noexcept
 {
     std::string url = "https://api.telegram.org/bot" + token;
     switch (type)
@@ -67,3 +67,14 @@ void TelegramSender::query(std::string id, type_msg type, std::string offset)
         break;
     }
 }
+
+TSexception::TSexception(std::string str) : msg(std::move(str)) {}
+
+TSexception::TSexception(const TSexception& obj) : msg(obj.msg) {}
+
+const char * TSexception::what() const noexcept 
+{
+    return msg.c_str();
+}
+
+BadTypeValueTSexception::BadTypeValueTSexception(std::string str) : TSexception(std::move(str)) {}

@@ -48,3 +48,5 @@ const char * TUexception::what() const noexcept
 {
     return msg.c_str();
 }
+
+EmptyQueryResultTUexception::EmptyQueryResultTUexception(std::string str) : TUexception(std::move(str)) {}

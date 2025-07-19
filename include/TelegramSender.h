@@ -13,9 +13,26 @@ enum class type_msg{
     read, send
 };
 
+class TSexception : public std::exception{
+protected:
+    std::string msg;
+
+public:
+    TSexception(std::string);
+    TSexception(const TSexception&);
+    
+    const char * what() const noexcept override;
+
+};
+
+class BadTypeValueTSexception : public TSexception{
+public:
+    BadTypeValueTSexception(std::string);
+};
+
 class TelegramSender{
 public:
-    static TelegramSender* get_instance();
+    static TelegramSender* get_instance() noexcept;
 
     TelegramSender(const TelegramSender&) = delete;
     TelegramSender& operator=(const TelegramSender&) = delete;
@@ -30,7 +47,7 @@ private:
 
     TelegramSender();
 
-    void query(std::string id, type_msg type, std::string offset);
+    void query(std::string id, type_msg type, std::string offset) noexcept;
 };
 
 size_t writeCallback(void*, size_t, size_t, void*);
@@ -38,6 +55,10 @@ size_t writeCallback(void*, size_t, size_t, void*);
 template<typename Data1, typename Type, typename Data2>
 std::future<void> TelegramSender::call(Data1&& id, Type&&type, Data2&& offset)
 {
+    if(!(std::is_same<std::decay_t<Data1>, std::string>::value && std::is_same<std::decay_t<Data2>, std::string>::value)){
+        throw BadTypeValueTSexception("Value must be string\n");
+    }
+
     return std::async(std::launch::async, &TelegramSender::query, 
         get_instance(),
         std::forward<Data1>(id),

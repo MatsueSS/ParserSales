@@ -27,6 +27,13 @@ public:
 class BadTypeValueTUexception : public TUexception{
 public:
     BadTypeValueTUexception(std::string);
+
+};
+
+class EmptyQueryResultTUexception : public TUexception{
+public:
+    EmptyQueryResultTUexception(std::string);
+
 };
 
 class TelegramUser{
@@ -134,11 +141,16 @@ double TelegramUser::forecasting(Type&& str)
         sample.push_back(count_week(dates[i], dates[i-1]));
     }
 
-    if(sample.size() == 0)
-        return 0;
-    
     Forecast f;
-    double probability = f.make_forecast(sample);
+    double probability;
+    try{
+        probability = f.make_forecast(sample);
+    } catch(ZeroDivisionFCexception& e){
+        probability = 0;
+    }
+    if(dates.empty())
+        throw EmptyQueryResultTUexception("Bad query result\n");
+
     int n = count_week(get_date_now(), dates.back());
     return pow((1.0-probability), n)*probability;
 }

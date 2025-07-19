@@ -5,7 +5,7 @@
 
 class PyLoader{
 public:
-    static int script_load(std::string);
+    static int script_load(std::string) noexcept;
 };
 
 #endif //_PY_LOADER_H_
