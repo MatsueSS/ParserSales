@@ -83,7 +83,7 @@ double Forecast::probability_geometric(Mean&& mean) const
 template<typename Mean, typename N>
 double Forecast::probability_poisson(Mean&& mean, N&& n) const
 {
-    if(!std::is_same<std::decay_t<N>, int>::value){
+    if constexpr (!std::is_same<std::decay_t<N>, int>::value){
         throw BadTypeValueFCexception("Value must be int\n");
     }
 

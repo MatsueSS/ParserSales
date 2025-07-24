@@ -45,7 +45,7 @@ private:
 template<typename Type>
 void BotTelegram::notify_all(Type&& sale)
 {
-    if(!std::is_same<std::decay_t<Type>, std::string>::value){
+    if constexpr (!std::is_same<std::decay_t<Type>, std::string>::value){
         throw BadTypeValueTUexception("Value must be string\n");
     }
 

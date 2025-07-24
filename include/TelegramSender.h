@@ -55,7 +55,7 @@ size_t writeCallback(void*, size_t, size_t, void*);
 template<typename Data1, typename Type, typename Data2>
 std::future<void> TelegramSender::call(Data1&& id, Type&&type, Data2&& offset)
 {
-    if(!(std::is_same<std::decay_t<Data1>, std::string>::value && std::is_same<std::decay_t<Data2>, std::string>::value)){
+    if constexpr (!(std::is_same<std::decay_t<Data1>, std::string>::value && std::is_same<std::decay_t<Data2>, std::string>::value)){
         throw BadTypeValueTSexception("Value must be string\n");
     }
 

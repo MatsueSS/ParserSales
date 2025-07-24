@@ -40,7 +40,7 @@ private:
 template<typename Type>
 std::vector<std::string> JsonReader::read(Type&& query, type_json type)
 {
-    if(!std::is_same<std::decay_t<Type>, std::string>::value){
+    if constexpr (!std::is_same<std::decay_t<Type>, std::string>::value){
         throw BadValueTypeJSexception("Value must be string\n");
     }
 

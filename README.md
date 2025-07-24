@@ -33,3 +33,7 @@ mkdir build
 cd build
 cmake ..
 make
+
+----- used instruments -----
+
+C++/C, STL, git, cmake, libpq, libcurl, py-selenium, py-requests, jq
